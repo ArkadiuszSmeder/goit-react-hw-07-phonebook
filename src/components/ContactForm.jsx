@@ -1,42 +1,31 @@
-import React, { useState } from "react";
+import React from "react";
 import { ContactData, ContactInput, ContactSubmit, ContactLabel } from "../styled/styled-contactForm"
-import { useDispatch, useSelector } from "react-redux";
-import { addContact } from "../redux/contactsSlice";
+import { useDispatch } from "react-redux";
+import { addContact } from "../redux/operations";
+import { nanoid } from '@reduxjs/toolkit';
 
 export const ContactForm = () => {
-  const [formData, setFormData] = useState({ name: "", number: "" });
-  const dispatch = useDispatch();
-  const contacts = useSelector((state) => state.contacts.contacts);
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  const dispatch = useDispatch();
+  const nameInputId = nanoid();
+  const numberInputId = nanoid();
+
 
   const handleSubmit = event => {
     event.preventDefault();
-    const duplicate = contacts.find(contact => 
-      contact.name === formData.name || contact.number === formData.number
-    );
-    if (duplicate) {
-      alert('Contact already exists');
-      return;
-    }
-    dispatch(addContact(formData.name, formData.number));
-    setFormData({ name: "", number: "" });
+    const form = event.currentTarget;
+    const name = form.elements.name.value;
+    const phone = form.elements.phone.value;
+    dispatch(addContact({name, phone}));
+    form.reset();
   }
 
   return (
     <ContactData onSubmit={handleSubmit}>
       <ContactLabel htmlFor="name">Name</ContactLabel>
       <ContactInput
-        id="name"
+        id={nameInputId}
         name="name"
-        value={formData.name}
-        onChange={handleChange}
         type="text"
         // pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
         title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
@@ -44,10 +33,8 @@ export const ContactForm = () => {
       />
       <ContactLabel htmlFor="number">Number</ContactLabel>
       <ContactInput
-        id="number"
-        name="number"
-        value={formData.number}
-        onChange={handleChange}
+        id={numberInputId}
+        name="phone"
         type="tel"
         // pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
         title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
