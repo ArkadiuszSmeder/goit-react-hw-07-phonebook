@@ -1,15 +1,15 @@
 import React from "react"
 import { FilterPart, FilterField } from "styled/styled-filter";
-import { useSelector } from "react-redux";
-// import { filterContact } from "../redux/contactsSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { filterContact } from "../redux/filterSlice";
 
 export const Filter = () => {
 
-    // const dispatch = useDispatch();
+    const dispatch = useDispatch();
     const filter = useSelector((state) => state.contacts.filter);
 
     const handleChange = (e) => {
-        // dispatch(filterContact(e.target.value));
+        dispatch(filterContact(e.target.value));
       };
 
     return <FilterPart>
